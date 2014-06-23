@@ -1,0 +1,1 @@
+Repository for the modified MyVibes system, which will be called MyVibes 2.0.
