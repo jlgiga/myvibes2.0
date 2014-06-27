@@ -1,0 +1,145 @@
+
+<--- Songs --->
+
+INSERT into songs(title, artist, album, genre, year) VALUES('Back In Black', 'AC/DC', 'Back In Black','Hard Rock', '1980');
+INSERT into songs(title, artist, album, genre, year) VALUES('Shoot To Thrill', 'AC/DC', 'Back In Black','Hard Rock', '1980');
+INSERT into songs(title, artist, album, genre, year) VALUES('Complicated', 'Avril Lavigne', 'Let Go', 'Rock', '2002');
+INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
+INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
+INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
+
+INSERT INTO last_played (userid,sid,date_time,last_child) VALUES (1, ,NOW(),0);
+
+<------------->
+
+<--- Elapsed --->
+
+INSERT into elapsed(userid, sid, start_time, end_time, curr_track_length) VALUES( , "4:15");
+
+<------------->
+
+
+<--- Friend Request --->
+
+INSERT INTO friends(firstname, lastname, username, description, country, userid) SELECT firstname, lastname, username, description, country, 1 FROM profile WHERE username='Kira';
+INSERT INTO friends(firstname, lastname, username, description, country, userid) SELECT firstname, lastname, username, description, country, 2 FROM profile WHERE username='jlgiga';
+DELETE from friendreq WHERE sender='Kira' AND receiver='jlgiga';
+
+<-------------->
+
+create table userprof(
+userid serial,
+username varchar,
+password varchar,
+
+primary key(userid)
+);
+
+create table edges(
+parentID varchar,
+childID varchar,
+linked int,
+userid int,
+
+primary key(parentID, childID),
+foreign key(userid) references userprof(userid)
+);
+
+create table friends(
+userid int,
+firstname varchar,
+lastname varchar,
+description varchar,
+country varchar,
+username varchar,
+
+foreign key(userid) references userprof(userid)
+);
+
+create table friendreq(
+id serial,
+sender varchar,
+receiver varchar,
+reqid int,
+userid int,
+
+primary key(id),
+foreign key(userid) references userprof(userid)
+);
+
+create table user_top_songs(
+userid int,
+top_songs varchar,
+
+foreign key(userid) references userprof(userid)
+);
+
+create table profile(
+userid int,
+username varchar,
+firstname varchar,
+lastname varchar,
+gender varchar,
+country varchar,
+description varchar,
+emailaddress varchar,
+
+foreign key(userid) references userprof(userid)
+);
+
+create table friends_pr(
+userid int,
+sid int,
+pagerank int,
+
+foreign key(userid) references userprof(userid)
+);
+
+create table global_pr(
+sid int,
+pagerank numeric,
+
+foreign key(sid) references songs(sid)
+);
+
+create table songs(
+sid varchar,
+title varchar,
+artist varchar,
+album varchar,
+genre varchar,
+year varchar,
+num_skips int,
+num_plays int,
+
+primary key(sid)
+);
+
+create table user_pr(
+userid int,
+sid int,
+pagerank numeric,
+
+foreign key(userid) references userprof(userid)
+);
+
+create table elapsed(
+userid int,
+sid int,
+start_time timestamp with time zone,
+end_time timestamp with time zone,
+curr_track_length varchar,
+
+foreign key(userid) references userprof(userid),
+foreign key(sid) references songs(sid)
+);
+
+create table last_played(
+userid int,
+sid int,
+last_child int,
+date_time timestamp,
+mood varchar,
+
+foreign key(userid) references userprof(userid)
+);
