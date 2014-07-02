@@ -23,6 +23,22 @@ $counter = 1;
 $q = "SELECT s.*, l.* FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE l.userid = (SELECT userid FROM profile WHERE username = '$uname') ORDER BY l.date_time DESC";
 $query = pg_query($q);
 
+
+//$cTime = date('H:i:s');			// returns something like '06:14:06'
+if (time() >= strtotime('06:00:00') && time() <= strtotime('11:59:00')) {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '06:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '11:59:00'";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '06:00:00' AND '11:59:00' group by title order by count(*) desc LIMIT 10";
+} else if (time() >= strtotime('12:00:00') && time() <= strtotime('17:59:00')) {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '12:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '17:59:00'";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '12:00:00' AND '17:59:00' group by title order by count(*) desc LIMIT 10";
+} else {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '18:00:00' AND to_char(date_time, 'HH24:MI:SS') >= '05:59:00'";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '18:00:00' AND '05:59:00' group by title order by count(*) desc LIMIT 10";
+}
+
+//$timeOfDayResult = $conn->get_results($timeOfDayQuery);
+$timeOfDayResult = pg_query($timeOfDayQuery);
+
 if($num_rows == 0){
 	$timeline = "You haven't started listening to songs yet.";
 }
@@ -48,6 +64,10 @@ else{
 					<img src="img/emoticon/angry.jpg" width="50" height="20" id="angry/disgusted" title="angry/disgusted" alt="angry" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" />
 					<br/>
 				</div>';
+				while($timeOfDayRow=pg_fetch_assoc($timeOfDayResult)){
+					$timeline .= $timeOfDayRow['title'];
+					$timeline .= $timeOfDayRow['count'];
+				}
 		} else {
 			$timeline .= formatTweet($row2,$row['date_time'],$uname);
 		}
