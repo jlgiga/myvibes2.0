@@ -1,10 +1,11 @@
-
 <--- Songs --->
 
 INSERT into songs(title, artist, album, genre, year) VALUES('Back In Black', 'AC/DC', 'Back In Black','Hard Rock', '1980');
 INSERT into songs(title, artist, album, genre, year) VALUES('Shoot To Thrill', 'AC/DC', 'Back In Black','Hard Rock', '1980');
 INSERT into songs(title, artist, album, genre, year) VALUES('Complicated', 'Avril Lavigne', 'Let Go', 'Rock', '2002');
-INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
+INSERT into songs(title, artist, album, genre, year) VALUES('Highway To Hell', 'AC/DC', 'Highway To Hell', 'Hard Rock', '1979');
+INSERT into songs(title, artist, album, genre, year) VALUES('Walk This Way', 'Aerosmith', 'Greatest Hits Disc 1', 'Rock', '2008');
+INSERT into songs(title, artist, album, genre, year) VALUES('I Don''t Want To Miss A Thing', 'Aerosmith', 'Greatest Hits Disc 1', 'Rock', '2008');
 INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
 INSERT into songs(title, artist, album, genre, year, num_skips, num_plays) VALUES();
 
@@ -33,6 +34,19 @@ username varchar,
 password varchar,
 
 primary key(userid)
+);
+
+create table songs(
+sid serial,
+title varchar,
+artist varchar,
+album varchar,
+genre varchar,
+year varchar,
+num_skips int,
+num_plays int,
+
+primary key(sid)
 );
 
 create table edges(
@@ -102,19 +116,6 @@ pagerank numeric,
 foreign key(sid) references songs(sid)
 );
 
-create table songs(
-sid varchar,
-title varchar,
-artist varchar,
-album varchar,
-genre varchar,
-year varchar,
-num_skips int,
-num_plays int,
-
-primary key(sid)
-);
-
 create table user_pr(
 userid int,
 sid int,
@@ -141,5 +142,21 @@ last_child int,
 date_time timestamp,
 mood varchar,
 
-foreign key(userid) references userprof(userid)
+foreign key(userid) references userprof(userid),
+foreign key(sid) references songs(sid)
+);
+
+create table globalHappyMood_pr(
+sid int,
+pagerank numeric,
+
+foreign key(sid) references songs(sid)
+);
+
+create table globalMood_pr(
+sid int,
+pagerank numeric,
+mood varchar,
+
+foreign key(sid) references songs(sid)
 );

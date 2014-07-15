@@ -50,6 +50,66 @@ function pagerankGlb() {
 	}
 }
 
+function pagerankGlbHappyMood() {
+	$damping_factor = 0.85;
+	$matrix = array();
+	$matrix = adjacencyMatrixGlbHappyMood();
+	if(sizeof($matrix) > 0){
+		$row_stochastic_matrix = rowStochastic($damping_factor, $matrix);
+		$transposed_matrix = transpose($row_stochastic_matrix);
+		$eigen_vector = eigenVector($transposed_matrix);
+		$normalized_eigenvector = normalizeVector($eigen_vector);
+		insertToGlbMoodPR($normalized_eigenvector, 'happy');
+	}else{
+		exit();	
+	}
+}
+
+function pagerankGlbSadMood() {
+	$damping_factor = 0.85;
+	$matrix = array();
+	$matrix = adjacencyMatrixGlbHappyMood();
+	if(sizeof($matrix) > 0){
+		$row_stochastic_matrix = rowStochastic($damping_factor, $matrix);
+		$transposed_matrix = transpose($row_stochastic_matrix);
+		$eigen_vector = eigenVector($transposed_matrix);
+		$normalized_eigenvector = normalizeVector($eigen_vector);
+		insertToGlbMoodPR($normalized_eigenvector, 'sad');
+	}else{
+		exit();	
+	}
+}
+
+function pagerankGlbSurprisedAfraidMood() {
+	$damping_factor = 0.85;
+	$matrix = array();
+	$matrix = adjacencyMatrixGlbHappyMood();
+	if(sizeof($matrix) > 0){
+		$row_stochastic_matrix = rowStochastic($damping_factor, $matrix);
+		$transposed_matrix = transpose($row_stochastic_matrix);
+		$eigen_vector = eigenVector($transposed_matrix);
+		$normalized_eigenvector = normalizeVector($eigen_vector);
+		insertToGlbMoodPR($normalized_eigenvector, 'surprisedAfraid');
+	}else{
+		exit();	
+	}
+}
+
+function pagerankGlbAngryDisgustedMood() {
+	$damping_factor = 0.85;
+	$matrix = array();
+	$matrix = adjacencyMatrixGlbHappyMood();
+	if(sizeof($matrix) > 0){
+		$row_stochastic_matrix = rowStochastic($damping_factor, $matrix);
+		$transposed_matrix = transpose($row_stochastic_matrix);
+		$eigen_vector = eigenVector($transposed_matrix);
+		$normalized_eigenvector = normalizeVector($eigen_vector);
+		insertToGlbMoodPR($normalized_eigenvector, 'angryDisgusted');
+	}else{
+		exit();	
+	}
+}
+
 $users = array();
 $users = users();
 $usersGrp = array();

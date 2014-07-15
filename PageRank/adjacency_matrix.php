@@ -37,6 +37,120 @@ function adjacencyMatrixGlb() {
 	return $matrix;
 }
 
+// for global mood rank
+
+function adjacencyMatrixGlbHappyMood() {
+	echo "Creating a matrix...\n";
+	$songs = array();
+	$matrix = array();
+
+	$nodes = pg_query("SELECT DISTINCT s.sid 
+					   FROM songs AS s JOIN last_played AS l ON l.sid = s.sid 
+					   WHERE mood = 'happy' 
+					   ORDER BY s.sid ASC");
+	while($row = pg_fetch_array($nodes)) {
+		$songs[] = $row['sid']; 		
+	}
+	$songsStr = implode("', '", $songs);
+
+	$number_of_nodes = pg_num_rows($nodes);
+	if($number_of_nodes > 0) {
+		$matrix = array_fill(0, $number_of_nodes, array_fill(0, $number_of_nodes, 0));
+		$p = pg_query("SELECT edges.parentid, edges.childid, SUM(edges.linked) AS linked 
+					   FROM edges
+					   WHERE edges.parentid = ANY(ARRAY['$songsStr']) AND edges.childid = ANY(ARRAY['$songsStr'])
+					   GROUP BY parentid, childid
+					   ORDER BY parentid ASC");
+		while($row = pg_fetch_array($p)) {
+				$matrix[$row['parentid']-1][$row['childid']-1] = $row['linked'];
+		}
+	}
+	return $matrix;
+}
+
+function adjacencyMatrixGlbSadMood() {
+	echo "Creating a matrix...\n";
+	$songs = array();
+	$matrix = array();
+	$nodes = pg_query("SELECT DISTINCT s.sid 
+					   FROM songs AS s JOIN last_played AS l ON l.sid = s.sid 
+					   WHERE mood = 'sad' 
+					   ORDER BY s.sid ASC");
+	while($row = pg_fetch_array($nodes)) {
+		$songs[] = $row['sid']; 		
+	}
+	$songsStr = implode("', '", $songs);
+
+	$number_of_nodes = pg_num_rows($nodes);
+	if($number_of_nodes > 0) {
+		$matrix = array_fill(0, $number_of_nodes, array_fill(0, $number_of_nodes, 0));
+		$p = pg_query("SELECT edges.parentid, edges.childid, SUM(edges.linked) AS linked 
+					   FROM edges
+					   WHERE edges.parentid = ANY(ARRAY['$songsStr']) AND edges.childid = ANY(ARRAY['$songsStr'])
+					   GROUP BY parentid, childid
+					   ORDER BY parentid ASC");
+		while($row = pg_fetch_array($p)) {
+				$matrix[$row['parentid']-1][$row['childid']-1] = $row['linked'];
+		}
+	}
+	return $matrix;
+}
+
+function adjacencyMatrixGlbSurprisedAfraidMood() {
+	echo "Creating a matrix...\n";
+	$songs = array();
+	$matrix = array();
+	$nodes = pg_query("SELECT DISTINCT s.sid 
+					   FROM songs AS s JOIN last_played AS l ON l.sid = s.sid 
+					   WHERE mood = 'surprisedAfraid' 
+					   ORDER BY s.sid ASC");
+	while($row = pg_fetch_array($nodes)) {
+		$songs[] = $row['sid']; 		
+	}
+	$songsStr = implode("', '", $songs);
+
+	$number_of_nodes = pg_num_rows($nodes);
+	if($number_of_nodes > 0) {
+		$matrix = array_fill(0, $number_of_nodes, array_fill(0, $number_of_nodes, 0));
+		$p = pg_query("SELECT edges.parentid, edges.childid, SUM(edges.linked) AS linked 
+					   FROM edges
+					   WHERE edges.parentid = ANY(ARRAY['$songsStr']) AND edges.childid = ANY(ARRAY['$songsStr'])
+					   GROUP BY parentid, childid
+					   ORDER BY parentid ASC");
+		while($row = pg_fetch_array($p)) {
+				$matrix[$row['parentid']-1][$row['childid']-1] = $row['linked'];
+		}
+	}
+	return $matrix;
+}
+
+function adjacencyMatrixGlbAngryDisgustedMood() {
+	echo "Creating a matrix...\n";
+	$songs = array();
+	$matrix = array();
+	$nodes = pg_query("SELECT DISTINCT s.sid 
+					   FROM songs AS s JOIN last_played AS l ON l.sid = s.sid 
+					   WHERE mood = 'angryDisgusted' 
+					   ORDER BY s.sid ASC");
+	while($row = pg_fetch_array($nodes)) {
+		$songs[] = $row['sid']; 		
+	}
+	$songsStr = implode("', '", $songs);
+
+	$number_of_nodes = pg_num_rows($nodes);
+	if($number_of_nodes > 0) {
+		$matrix = array_fill(0, $number_of_nodes, array_fill(0, $number_of_nodes, 0));
+		$p = pg_query("SELECT edges.parentid, edges.childid, SUM(edges.linked) AS linked 
+					   FROM edges
+					   WHERE edges.parentid = ANY(ARRAY['$songsStr']) AND edges.childid = ANY(ARRAY['$songsStr'])
+					   GROUP BY parentid, childid
+					   ORDER BY parentid ASC");
+		while($row = pg_fetch_array($p)) {
+				$matrix[$row['parentid']-1][$row['childid']-1] = $row['linked'];
+		}
+	}
+	return $matrix;
+}
 
 // for group rank
 

@@ -23,17 +23,22 @@ $counter = 1;
 $q = "SELECT s.*, l.* FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE l.userid = (SELECT userid FROM profile WHERE username = '$uname') ORDER BY l.date_time DESC";
 $query = pg_query($q);
 
-
 //$cTime = date('H:i:s');			// returns something like '06:14:06'
 if (time() >= strtotime('06:00:00') && time() <= strtotime('11:59:00')) {
 	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '06:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '11:59:00'";
-	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '06:00:00' AND '11:59:00' group by title order by count(*) desc LIMIT 10";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid 
+					   WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '06:00:00' AND '11:59:00' 
+					   GROUP BY title ORDER BY COUNT(*) DESC LIMIT 10";
 } else if (time() >= strtotime('12:00:00') && time() <= strtotime('17:59:00')) {
 	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '12:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '17:59:00'";
-	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '12:00:00' AND '17:59:00' group by title order by count(*) desc LIMIT 10";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid 
+					   WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '12:00:00' AND '17:59:00' 
+					   GROUP BY title ORDER BY COUNT(*) DESC LIMIT 10";
 } else {
 	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '18:00:00' AND to_char(date_time, 'HH24:MI:SS') >= '05:59:00'";
-	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '18:00:00' AND '05:59:00' group by title order by count(*) desc LIMIT 10";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid 
+					   WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '18:00:00' AND '05:59:00' 
+					   GROUP BY title ORDER BY COUNT(*) DESC LIMIT 10";
 }
 
 //$timeOfDayResult = $conn->get_results($timeOfDayQuery);
@@ -48,28 +53,30 @@ else{
 		$row2 = "is listening to ".$row['title']." by ".$row['artist']." ";
 		$row3 = "are listening to ".$row['title']." by ".$row['artist']." ";
 		if ($uname) {
-			$timeline .= formatTweet($row3,$row['date_time'], "you", $counter);
+			$timeline .= formatTweet($row3, $row['date_time'], "you", $counter, $row['mood']);
 			$timeline .= '
-				<div id="message'. $counter .'" style="display: none;">
-            	</div>
-				<div id="waiting'. $counter .'" style="display: none;">
-	                Please wait<br />
-	                <img src="img/ajax-loader1.gif" title="Loader" alt="Loader" />
-	            </div>	
-			    <div class="mood" id="target_'. $counter .'" style="width:670px;height:80px;background-color:white;">
+			    <div class="mood" id="target_'. $counter .'" style="width:670px;height:150px;background-color:white;">
 					<br/>
-					<img src="img/emoticon/happy.jpg" width="50" height="20" id="happy" title="happy" alt="happy" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).', '. $counter .')" />
-					<img src="img/emoticon/sad.jpg" width="50" height="20" id="sad" title="sad" alt="sad" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" />
-					<img src="img/emoticon/surprised.jpg" width="50" height="20" id="surprised/afraid" title="surprised/afraid" alt="surprised" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" />
-					<img src="img/emoticon/angry.jpg" width="50" height="20" id="angry/disgusted" title="angry/disgusted" alt="angry" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" />
+					<table id="hor-minimalist-a">
+					<tbody>
+					<tr>
+					<td><img src="img/emoticon/happy.png" width="50" height="20" id="happy" title="happy" alt="happy" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).', '. $counter .')" /></td>
+					<td><img src="img/emoticon/sad.png" width="50" height="20" id="sad" title="sad" alt="sad" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" /></td>
+					<td><img src="img/emoticon/surprised.png" width="50" height="20" id="surprisedAfraid" title="surprised/afraid" alt="surprised" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" /></td>
+					<td><img src="img/emoticon/angry.png" width="50" height="20" id="angry/disgusted" title="angryDisgusted" alt="angry" onclick="getMood(this.id, ' .$row['sid']. ', '.$row['userid'].', '.strtotime($row['date_time']).')" /></td>
+					</tr>
+					<tr id="moodPercent">
+					<td><div class="per" id="perHappy"></div></td>
+					<td><div class="per" id="perSad"></div></td>
+					<td><div class="per" id="perFearPrised"></div></td>
+					<td><div class="per" id="perAngst"></div></td>
+					</tr>
+					</tbody>
+					</table>
 					<br/>
 				</div>';
-				while($timeOfDayRow=pg_fetch_assoc($timeOfDayResult)){
-					$timeline .= $timeOfDayRow['title'];
-					$timeline .= $timeOfDayRow['count'];
-				}
 		} else {
-			$timeline .= formatTweet($row2,$row['date_time'],$uname);
+			$timeline .= formatTweet($row2,$row['date_time'],$uname,$row['mood']);
 		}
 		$counter = $counter + 1;
 	}
@@ -228,19 +235,19 @@ $friends = pg_query("SELECT userprof.userid AS userid FROM userprof, friends
 while($f_row = pg_fetch_array($friends)) {
 	$users[] = $f_row['userid']; 		
 }
-
+$userStr = implode("', '", $users);
 $pc_query3 = pg_query("SELECT songs.sid, songs.artist, songs.title, SUM(link)/2 AS links, DENSE_RANK() OVER(ORDER BY SUM(link)/2 DESC) rank_dense
 					FROM 
 						(SELECT songs.sid AS songid, edges.linked AS link 
 							FROM songs, edges
-							WHERE edges.userid = ANY(ARRAY[" . implode(',', $users) . "]) 
+							WHERE edges.userid = (ARRAY['$userStr']) 
 							AND songs.sid = edges.parentid
 							
 						UNION ALL
 						
 						SELECT songs.sid AS songid, edges.linked AS link
 							FROM songs, edges
-							WHERE edges.userid = ANY(ARRAY[" . implode(',', $users) . "]) 
+							WHERE edges.userid = ANY(ARRAY['$userStr']) 
 							AND songs.sid = edges.childid
 						) AS X, songs
 					WHERE songs.sid = songid
@@ -258,6 +265,75 @@ else{
 	}	
 }
 
+/*SELECT songs.sid AS songid, edges.linked AS link
+							FROM songs, edges
+							WHERE edges.userid = ANY(ARRAY[" . implode(',', $users) . "])*/
+
+// mood
+
+$queryGlHappyMoodPr = pg_query("SELECT songs.sid, songs.title, songs.artist, globalmood_pr.pagerank, DENSE_RANK() OVER(ORDER BY globalmood_pr.pagerank DESC) dense_rank 
+		FROM songs, globalmood_pr 
+		WHERE songs.sid = globalmood_pr.sid and globalmood_pr.mood = 'happy'");
+
+if(pg_num_rows($queryGlHappyMoodPr) == 0){
+	 $glHappyMoodPr = "No Top 10 Tracks Determined Yet.";
+}
+else{
+	$glHappyMoodPr="";
+	while($qry = pg_fetch_array($glHappyMoodPr)){
+		if($qry['dense_rank'] <= 10){				
+			$glHappyMoodPr .= "<br/>" . preg_replace("/((?:http|https|ftp):\/\/(?:[A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?[^\s\"\']+)/i","<a href='$1' rel='nofollow' target='blank'>$1</a>", $qry['dense_rank'] . ". <b><a href='get_data.php?id=" . $qry['sid'] . "&type=global' onclick='return false' style='text-decoration: none' class='sample'>" . $qry['title'] . "</a></b>");
+		}
+	}	
+}
+
+$queryGlHappyMoodPr = pg_query("SELECT songs.sid, songs.title, songs.artist, globalmood_pr.pagerank, DENSE_RANK() OVER(ORDER BY globalmood_pr.pagerank DESC) dense_rank 
+		FROM songs, globalmood_pr 
+		WHERE songs.sid = globalmood_pr.sid and globalmood_pr.mood = 'sad'");
+
+if(pg_num_rows($queryGlSadMoodPr) == 0){
+	 $glSadMoodPr = "No Top 10 Tracks Determined Yet.";
+}
+else{
+	$glSadMoodPr="";
+	while($qry = pg_fetch_array($glSadMoodPr)){
+		if($qry['dense_rank'] <= 10){				
+			$glSadMoodPr .= "<br/>" . preg_replace("/((?:http|https|ftp):\/\/(?:[A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?[^\s\"\']+)/i","<a href='$1' rel='nofollow' target='blank'>$1</a>", $qry['dense_rank'] . ". <b><a href='get_data.php?id=" . $qry['sid'] . "&type=global' onclick='return false' style='text-decoration: none' class='sample'>" . $qry['title'] . "</a></b>");
+		}
+	}	
+}
+
+$queryGlFearPrisedMoodPr = pg_query("SELECT songs.sid, songs.title, songs.artist, globalmood_pr.pagerank, DENSE_RANK() OVER(ORDER BY globalmood_pr.pagerank DESC) dense_rank 
+		FROM songs, globalmood_pr 
+		WHERE songs.sid = globalmood_pr.sid and globalmood_pr.mood = 'surprisedAfraid'");
+
+if(pg_num_rows($queryGlFearPrisedMoodPr) == 0){
+	 $glFearPrisedMoodPr = "No Top 10 Tracks Determined Yet.";
+}
+else{
+	$glFearPrisedMoodPr="";
+	while($qry = pg_fetch_array($glFearPrisedMoodPr)){
+		if($qry['dense_rank'] <= 10){				
+			$glFearPrisedMoodPr .= "<br/>" . preg_replace("/((?:http|https|ftp):\/\/(?:[A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?[^\s\"\']+)/i","<a href='$1' rel='nofollow' target='blank'>$1</a>", $qry['dense_rank'] . ". <b><a href='get_data.php?id=" . $qry['sid'] . "&type=global' onclick='return false' style='text-decoration: none' class='sample'>" . $qry['title'] . "</a></b>");
+		}
+	}	
+}
+
+$queryGlHappyMoodPr = pg_query("SELECT songs.sid, songs.title, songs.artist, globalmood_pr.pagerank, DENSE_RANK() OVER(ORDER BY globalmood_pr.pagerank DESC) dense_rank 
+		FROM songs, globalmood_pr 
+		WHERE songs.sid = globalmood_pr.sid and globalmood_pr.mood = 'angryDisgusted'");
+
+if(pg_num_rows($queryGlAngstMoodPr) == 0){
+	 $glAngstMoodPr = "No Top 10 Tracks Determined Yet.";
+}
+else{
+	$glAngstMoodPr="";
+	while($qry = pg_fetch_array($glAngstMoodPr)){
+		if($qry['dense_rank'] <= 10){				
+			$glAngstMoodPr .= "<br/>" . preg_replace("/((?:http|https|ftp):\/\/(?:[A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?[^\s\"\']+)/i","<a href='$1' rel='nofollow' target='blank'>$1</a>", $qry['dense_rank'] . ". <b><a href='get_data.php?id=" . $qry['sid'] . "&type=global' onclick='return false' style='text-decoration: none' class='sample'>" . $qry['title'] . "</a></b>");
+		}
+	}	
+}
 
 ?>
 
@@ -285,20 +361,15 @@ $(function () {
 		});
 	});
 	$('.mood').hide();
+	$('#moodPercent').hide();
 	$('button[data-target]').on('click', function(event){
         event.preventDefault();
         $('#target_' + $(this).attr('data-target')).fadeToggle("slow");
+        $(this).attr("disabled", true);
     });
 });
 
 function getMood(mood, songid, userid, datetime, counter) {
-	var waiting = '#waiting' + counter;
-	var mood = '.mood' + counter;
-
-	$(waiting).show(500);
-	$(mood).hide(0);
-	$('#message').hide(0);
-		
 	$.ajax({
 	    type : 'POST',
 	    url: 'includes/get_mood.php',
@@ -308,43 +379,53 @@ function getMood(mood, songid, userid, datetime, counter) {
 			useridTemp: userid,
 			datetimeTemp: datetime
 		},
+		dataType: "json"
 	}).done(function(data) {
-		$(waiting).hide(500);
-		$(mood).show(500);
+		//alert(data);
+		$('#moodPercent').show();
+		document.getElementById("perHappy").innerHTML = data[0] + "%";
+        document.getElementById("perSad").innerHTML = data[1] + "%";
+        document.getElementById("perFearPrised").innerHTML = data[2] + "%";
+        document.getElementById("perAngst").innerHTML = data[3] + "%";
 	}).fail(function() {
 		$(waiting).hide(500);
-		$('#message').removeClass().addClass('error')
+		$(message).removeClass().addClass('error')
 			.text('There was an error.').show(500);
 	});
-
-		/*$.ajax({
-			type : 'GET',
-			url : 'includes/get_mood.php',
-			dataType : 'json',
-			data: {
-				moodTemp  : mood,
-				songidTemp: songid,
-				useridTemp: userid
-			},
-			success : function(data){
-				$('#waiting').hide(500);
-				$('#message').removeClass().addClass((data.error === true) ? 'error' : 'success')
-					.text(data.msg).show(500);
-				//if (data.error === true)
-					//alert("hello");
-					//$('#demoForm').show(500);
-			},
-			error : function(XMLHttpRequest, textStatus, errorThrown) {
-				$('#waiting').hide(500);
-				$('#message').removeClass().addClass('error')
-					.text('There was an error.').show(500);
-				$('#demoForm').show(500);
-			}
-		});*/
 		
 	return false;
 }
+
 </script>
+<style>
+#hor-minimalist-a
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 10px;
+	width: 480px;
+	border-collapse: collapse;
+	text-align: center;
+}
+#hor-minimalist-a th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+}
+#hor-minimalist-a td
+{
+	color: #669;
+	padding: 9px 8px 0px 8px;
+}
+#hor-minimalist-a tbody tr:hover td
+{
+	color: #009;
+}
+</style>
 <link rel="stylesheet" type="text/css" href="css/demo2.css" />
 <script type="text/javascript" src="js/script2.js"></script>
 <link type="text/css" rel="stylesheet" href="css/jquery.ratings.css" />
@@ -372,12 +453,13 @@ function getMood(mood, songid, userid, datetime, counter) {
 				<li><a href="#top10">My Top Hits</a></li>
 				<li><a href="#friends-hits">My Circle's Hits</a></li>
 				<li><a href="#community-hits">Community Hits</a></li>
+				<li><a href="#mood">Community Mood</a></li>
 			</ul>
 			<!--Contents-->
 			<div class="tab-content form-tracks background1">
 				<!-- Tracks -->	
 				<div class="tab-pane" id="tracks"> 
-				<?php include "includes/tracks.inc.php"; ?>
+					<?php include "includes/tracks.inc.php"; ?>
 				</div>
 				<!-- Top10 -->	
 				<div class="tab-pane" id="top10"> 
@@ -390,6 +472,10 @@ function getMood(mood, songid, userid, datetime, counter) {
 				<!--Community Hits-->
 				<div class="tab-pane" id="community-hits">
 					<?php include "includes/community-hits.inc.php"; ?>
+				</div>
+				<!--Mood Recommendations-->
+				<div class="tab-pane" id="mood-recommendations">
+					<?php include "includes/mood-recommendation.inc.php"; ?>
 				</div>
 			</div>
 
