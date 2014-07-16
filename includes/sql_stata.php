@@ -83,6 +83,26 @@ $sql3 = "SELECT DISTINCT COUNT(*) D FROM friends WHERE userid = (SELECT userid F
 					$row6 = "<div style='min-width:100px; padding:5px;'>No friends added.<br/></div>";
 				}
 				
+$time_of_day;
+
+
+//$cTime = date('H:i:s');			// returns something like '06:14:06'
+if (time() >= strtotime('06:00:00') && time() <= strtotime('11:59:00')) {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '06:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '11:59:00'";
+	$time_of_day = "MORNING";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '06:00:00' AND '11:59:00' group by title order by count(*) desc LIMIT 10";
+} else if (time() >= strtotime('12:00:00') && time() <= strtotime('17:59:00')) {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '12:00:00' AND to_char(date_time, 'HH24:MI:SS') <= '17:59:00'";
+	$time_of_day = "AFTERNOON";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '12:00:00' AND '17:59:00' group by title order by count(*) desc LIMIT 10";
+} else {
+	//$sample = "SELECT s.title FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') >= '18:00:00' AND to_char(date_time, 'HH24:MI:SS') >= '05:59:00'";
+	$time_of_day = "EVENING";
+	$timeOfDayQuery = "SELECT s.title, count(*) FROM songs AS s JOIN last_played AS l on l.sid = s.sid WHERE to_char(date_time, 'HH24:MI:SS') BETWEEN '18:00:00' AND '05:59:00' group by title order by count(*) desc LIMIT 10";
+}
+
+//$timeOfDayResult = $conn->get_results($timeOfDayQuery);
+$timeOfDayResult = pg_query($timeOfDayQuery);				
 				
  if(isset($_POST['btnrmvf'])) 
 {

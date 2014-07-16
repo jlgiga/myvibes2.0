@@ -37,5 +37,21 @@
 		</tbody>
 		</table>
 		</div>
+		
+		<div class='span3' style='margin-left:14%; margin-top:5%;'>
+				
+				<tr>
+					<td>
+					<head>SONGS PLAYED THIS<?php echo $time_of_day;?></head>
+					</td>
+				</tr>
+				<?php while($timeOfDayRow=pg_fetch_assoc($timeOfDayResult)){ ?>
+				<tr>
+					<td>
+						<?php echo $timeOfDayRow['title']; ?>
+					</td>
+				</tr>
+				<?php }; ?>
+			</div>	
 	
 </div>
